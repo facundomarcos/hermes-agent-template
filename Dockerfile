@@ -133,6 +133,16 @@ COPY templates/ /app/templates/
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
+# The Telegram webhook + scale-to-zero patch system (see patch/README.md).
+# It CANNOT be COPYed to its own runtime path (/data/.hermes/patch): Railway
+# mounts the persistent volume at /data, which hides whatever the image has
+# there. So it ships at a non-volume path, and patch/entry.sh seeds the volume
+# at boot — meaning a redeploy updates the patch code and a wiped volume
+# re-bootstraps itself instead of leaving startCommand pointing at a missing
+# /data/.hermes/patch/boot.sh.
+COPY patch /opt/hermes-patch
+RUN chmod +x /opt/hermes-patch/entry.sh /opt/hermes-patch/boot.sh 2>/dev/null || true
+
 ENV HOME=/data
 ENV HERMES_HOME=/data/.hermes
 
