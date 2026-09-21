@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "/usr/bin/tini -g -- /data/.hermes/patch/boot.sh"
+startCommand = "/usr/bin/tini -g -- /usr/bin/bash /data/.hermes/patch/boot.sh"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
